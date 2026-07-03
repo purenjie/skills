@@ -45,7 +45,7 @@ For SPCA Digital Employee release tasks, apply these defaults unless Jay explici
 | Issue Type | `Task` |
 | Priority | `Low` |
 | Fix Version | the version Jay specified |
-| Component | `digital employee` |
+| Component | Jira standard Component exact name is `digital employee ` (note the trailing space). Resolve components from Jira metadata if possible; do not trim the name when passing `-C`. |
 | Assignee | `renjie.pu@shopee.com` |
 | Reporter | `renjie.pu@shopee.com` if supported; otherwise verify creator/reporter is Jay after creation |
 | Designer | `renjie.pu@shopee.com` if the configured custom field exists |
@@ -53,6 +53,17 @@ For SPCA Digital Employee release tasks, apply these defaults unless Jay explici
 | Labels | Do not invent labels by default |
 
 Important: always pass the assignee explicitly with `-a renjie.pu@shopee.com`. If this is omitted, Jira may assign the task to the project default assignee, commonly `Kong`, which is wrong for Jay's SPCA release-task workflow.
+
+
+### SPCA Component Name Quirk
+
+SPCA currently has a Jira standard Component named `digital employee ` with a trailing space. Passing `-C "digital employee"` fails with `Component name 'digital employee' is not valid`. Use the exact name:
+
+```bash
+-C "digital employee "
+```
+
+If this ever changes, query `/rest/api/2/project/SPCA/components` or project metadata and use the exact component name returned by Jira.
 
 ### Custom Fields
 
@@ -126,17 +137,24 @@ If a category is ambiguous, propose a category and one alternative, then ask Jay
 
 ## Description Style
 
-Write descriptions in compact Chinese. Include enough context for future release review:
+Jay's SPCA release-task input has two possible shapes:
 
-```text
-背景：...
-目标：...
-影响：...
-```
+1. **Task title only** — Jay provides only the task itself, with no detail/body.
+   - Optimize only the Jira summary/title and category.
+   - Leave the Jira description/body empty unless Jay explicitly asks to generate one.
+   - Do **not** invent background, goal, impact, root cause, implementation details, or quantified effects.
 
-For very small tasks, a single compact paragraph is fine. Do not add filler. Quantified effects such as `整体响应时间优化 30%+` belong in the description.
+2. **Task title + details** — Jay provides a task plus detail lines/body.
+   - Optimize the Jira summary/title and category.
+   - Polish the provided details into concise Chinese for the Jira description.
+   - Preserve Jay's meaning; do not add new facts that were not provided.
+   - Light structure is allowed only when it comes from Jay's details or helps readability without adding content.
 
-## Creation Workflow
+For small detail bodies, a compact paragraph is fine. If Jay provided quantified effects such as `整体响应时间优化 30%+`, keep them in the description.
+
+## Confirmation-First Creation Workflow
+
+Default workflow is **preview first, mutate only after Jay confirms**.
 
 1. Load the generic `jira` skill if command syntax is needed.
 2. Verify auth and project context:
@@ -147,9 +165,14 @@ For very small tasks, a single compact paragraph is fine. Do not add filler. Qua
    ```
 
 3. Resolve the target version name from the provided version URL or ID.
-4. Transform Jay's raw items into proposed Jira rows with: service, category, title, description, priority, fixVersion.
-5. Show the proposal to Jay before mutating Jira, unless he explicitly says to create directly.
-6. After Jay confirms, create tasks with explicit defaults.
+4. Transform Jay's raw items into a proposed update table with:
+   - Jira summary/title after polishing
+   - category
+   - description/body after polishing, or explicitly `空` when Jay provided no details
+   - fields/tags that will be written, including project, issue type, priority, fixVersion, component, assignee, reporter, status/resolution if requested, labels if any
+5. Show the proposal to Jay before mutating Jira. Include exactly which labels/fields will be updated.
+6. Wait for Jay's confirmation. Do not create, edit, close, or transition Jira issues before confirmation, unless Jay explicitly says to create/update directly in the same request.
+7. After Jay confirms, create/update tasks with explicit defaults.
 
 Example command:
 
@@ -185,7 +208,7 @@ For each newly created task, confirm:
 - Priority is `Low` unless overridden.
 - Assignee is Jay / `renjie.pu@shopee.com`.
 - Reporter is Jay.
-- Component is `digital employee` if the field is available.
+- Component is exact Jira component `digital employee ` if available; keep the trailing space when passing `-C`.
 - Labels are not invented unless Jay specified them.
 
 If a task is assigned to `Kong` or another project default assignee, immediately repair it:
@@ -240,6 +263,8 @@ When reporting completion, include the issue keys and final important fields. Ex
 
 ## Known Pitfalls
 
+- Do not create/update Jira before Jay confirms the preview, unless he explicitly says to create/update directly.
+- Do not invent descriptions for title-only tasks. Leave description empty when Jay provided no details.
 - Do not rely on Jira's default assignee. It may assign to `Kong`.
 - Do not assume `Done` is a valid status. In SPCA, completion may be `Closed`.
 - Do not invent labels under this skill. Labels need Jay's explicit rule before being standardized.
