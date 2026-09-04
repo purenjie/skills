@@ -1,0 +1,26 @@
+Timestamp                       Thread     Type        Activity             PID    TTL
+2026-08-10 09:00:00.000000+0800 0x100 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Start focus session
+	Goal: 完成 SpaceToken API：正常路径, 异常路径
+	Duration: 3000
+2026-08-10 09:50:00.000000+0800 0x100 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Complete focus session
+2026-08-10 09:50:00.100000+0800 0x101 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Focus session activity summary
+	Start date: 2026-08-10 01:00:00 +0000
+	Source: command
+	Duration: 50m
+	Pauses Count: 1
+	Block Events Count: 2
+	Snooze Events Count: 0
+2026-08-10 10:10:00.000000+0800 0x102 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Start focus session
+	Goal: Ready Latency 假设验证
+	Duration: 5400
+2026-08-10 11:15:00.000000+0800 0x102 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Complete focus session
+2026-08-10 11:15:00.100000+0800 0x103 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Focus session activity summary
+	Start date: 2026-08-10 02:10:00 +0000
+	Source: deeplink
+	Duration: 1h 5m
+	Pauses Count: 0
+	Block Events Count: 3
+	Snooze Events Count: 1
+2026-08-10 12:00:00.000000+0800 0x104 Info 0x0 100 0 Raycast: [com.raycast.macos:focus] Start focus session
+	Goal: 未完成的 Session
+	Duration: 1500
