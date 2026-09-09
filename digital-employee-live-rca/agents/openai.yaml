@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital Employee Live RCA"
+  short_description: "Fast Gateway/Runner RCA for live and test environments"
+  default_prompt: "Use $digital-employee-live-rca to trace this incident through ID-correlated online Gateway and Runner logs, identify the first confirmed root-cause boundary, and automatically send the terminal RCA summary to the fixed SeaTalk recipient."
