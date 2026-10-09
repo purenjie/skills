@@ -7,14 +7,15 @@ description: Investigate Digital Employee Gateway and Worker Runner online incid
 
 Find the first unexpected break, rejection, or missing successor in the target-environment marker chain. Prefer a short, ID-correlated evidence chain over collecting the full lifecycle.
 
-This skill is agent-independent. It requires only a shell, Python 3, `smc logcli` for production, `smc services logs` for the verified test source, and `smc seatalk` when the RCA notification contract applies; it does not depend on an agent-specific extension or tool protocol.
+This skill is agent-independent. It requires only a shell, Python 3, `smc logcli` for production, `smc services run` for the verified test source, and `smc seatalk` when the RCA notification contract applies; it does not depend on an agent-specific extension or tool protocol.
 
 ## Environment selection, truth, and safety
 
 - Default to the online production environments when the user does not name an environment: Gateway `shopee.engineering_infra.infra_products.digital_employee.gateway` / `liveish`, Runner `shopee.engineering_infra.infra_products.digital_employee.worker_runner` / `live`.
 - If the user explicitly says `test` / `测试环境`, query the test deployment. Do not fall back to `liveish` or `live`, and do not treat a production-app PQL miss as evidence about test.
-  - Use `scripts/de_logs.py ... --environment test`. It reads the active Bromo test services: Gateway `digitalemployee-gateway-test-sg` and Runner `digitalemployee-workerrunner-test-sg` with `smc services logs -e test`.
-  - Bromo has no remote time predicate. The collector fetches each service once, then retains only rows with a parseable application timestamp inside the requested window and the full requested ID. Unparseable container metadata and stale rows are excluded from RCA evidence.
+  - Use `scripts/de_logs.py ... --environment test`. It runs `cat` inside every running Bromo test container and reads the complete `daemon.log`; configure the Gateway/Runner test service names through the script environment.
+  - The default test window is the most recent 1 hour. The collector reads each complete container log once, then retains only rows with a parseable application timestamp inside the requested window and the full requested ID. Unparseable container metadata and stale rows are excluded from RCA evidence.
+  - Check `signals.test_window_coverage` before interpreting a miss. `complete` means the retained application log reaches the requested start; `partial` or `unknown` means absence is inconclusive because the container started later, the log rotated, or timestamps were unavailable. Positive ID-correlated matches remain valid.
   - Test Space can currently list the Gateway/Runner applications but may fail to resolve them to LogDB. `smc -c shopeetest logcli --base-url https://space.test.shopee.io` is optional only when that mapping becomes queryable; a mapping/auth failure is a query boundary, not an incident fact.
 - Online service logs are the runtime evidence. Local logs and source code can explain expected behavior but cannot prove what happened in the target environment.
 - The current Gateway contracts are documented in `docs/tech_docs/content/docs/reference/log-troubleshooting.md`, `de-core-execution-chain.md`, and `task-startup-metrics.md`; the current Runner markers are defined by `runner/kafka/worker.py`, `runner/ticket_execution/service.py`, `runner/agent_instance/client.py`, and `docs/log-troubleshooting.md`. When an older reference and a current marker disagree, use the target-environment line and current code as the source of truth, and call out rollout/version uncertainty.
@@ -93,16 +94,15 @@ python3 <skill-dir>/scripts/de_logs.py runner --run-id <run_id> \
 python3 <skill-dir>/scripts/de_logs.py joint --thread-id <thread_id> \
   --start "YYYY-MM-DD HH:MM" --end "YYYY-MM-DD HH:MM"
 
-# Test environment: Gateway/Runner Bromo daemon.log, locally bounded by timestamp.
-python3 <skill-dir>/scripts/de_logs.py joint --environment test --thread-id <thread_id> \
-  --start "YYYY-MM-DD HH:MM" --end "YYYY-MM-DD HH:MM"
+# Test environment: complete daemon.log from running Gateway/Runner containers, locally bounded to the latest 1h by default.
+python3 <skill-dir>/scripts/de_logs.py joint --environment test --thread-id <thread_id>
 ```
 
 Time contract:
 
 - Without `--start/--end`, the collector queries the most recent `1h` (`--hours 1`).
 - For a bounded range, pass both values in local Asia/Shanghai time: `--start "2026-09-01 00:00" --end "2026-09-01 01:00"`. The parser also accepts `T` between date and time.
-- Production ranges are split into small independent `smc logcli` segments. Test Bromo logs are fetched once and filtered locally by application timestamp, so a test query over a historical window depends on the active service retaining that window.
+- Production ranges are split into small independent `smc logcli` segments. Test container logs are read in full and filtered locally by application timestamp. A historical test miss is conclusive only when `test_window_coverage=complete`.
 
 Useful options:
 
@@ -168,11 +168,9 @@ Load only after the first timeline identifies the relevant boundary:
 
 ## SeaTalk notification
 
-Default recipient: `renjie.pu@shopee.com`.
+Notification is caller-managed by default. Do not call `notify_rca.py` merely because the RCA reached a terminal outcome. Use the helper only when the user or the invoking orchestrator explicitly requests this skill to send the final notification itself.
 
-The user has explicitly pre-authorized one automatic notification to this fixed recipient after each completed RCA. This authorization applies only to this skill, this recipient, and the completed RCA summary. Do not ask for confirmation, change the recipient, send unrelated messages, or retry a failed delivery unless the user explicitly requests it.
-
-Send one notification for every terminal outcome. The Markdown includes status, question, key IDs, conclusion, root cause or unconfirmed reason, responsibility boundary, at most 3 evidence lines, elapsed time, and next step. The script writes the exact sent message to the incident run directory for audit.
+When explicitly requested, set `SEATALK_RCA_RECIPIENT` to the approved recipient. Send at most one notification for the terminal outcome. The Markdown includes status, question, key IDs, conclusion, root cause or unconfirmed reason, responsibility boundary, at most 3 evidence lines, elapsed time, and next step. The script writes the exact sent message to the incident run directory for audit.
 
 ```bash
 python3 <skill-dir>/scripts/notify_rca.py \
@@ -188,7 +186,7 @@ python3 <skill-dir>/scripts/notify_rca.py \
   --next-step "<next step>"
 ```
 
-Call the script exactly once after the RCA reaches a terminal outcome. A SeaTalk failure does not alter the RCA status; report it separately as notification failure and do not retry automatically.
+When notification was explicitly requested, call the script exactly once after the RCA reaches a terminal outcome. A SeaTalk failure does not alter the RCA status; report it separately as notification failure and do not retry automatically.
 
 ## Output
 
@@ -205,7 +203,7 @@ Reply in Chinese unless asked otherwise:
 知识库：
 - <created note path, only when created>
 通知：
-- <sent | send failed>
+- <sent | send failed, only when notification was explicitly requested>
 ```
 
 For runner-backed execution, include available durations for Gateway handoff → Runner payload, provision/acquire → registration, registration → first Agent event, and first Agent event → SeaTalk result.

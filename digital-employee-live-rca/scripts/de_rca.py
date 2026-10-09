@@ -86,16 +86,7 @@ class RealLogClient:
             else ""
         )
         if self.environment == "test":
-            command = [
-                "smc",
-                "services",
-                "logs",
-                de_logs.TEST_SERVICES["runner"],
-                "--env",
-                "test",
-                "--wide",
-                "--show-table=false",
-            ]
+            command = de_logs.test_container_log_command("runner", self.timeout_seconds)
         else:
             command = [
                 "smc",

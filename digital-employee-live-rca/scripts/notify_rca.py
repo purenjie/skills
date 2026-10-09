@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import hashlib
 import json
 import re
@@ -12,7 +13,7 @@ from pathlib import Path
 
 import de_logs
 
-RECIPIENT = "renjie.pu@shopee.com"
+RECIPIENT = os.environ.get("SEATALK_RCA_RECIPIENT", "")
 MAX_EVIDENCE = 3
 MAX_MESSAGE_CHARS = 6000
 STATUS_LABELS = {

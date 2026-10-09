@@ -22,8 +22,8 @@ Reject statements such as “AI is important” or “do valuable work” until 
 
 Ask what kind of problems the user wants others to trust them to own one year from now.
 
-- **Primary lane:** 70–80% of strategic learning and ownership.
-- **Exploration branch:** 20–30%, preferably embedded in the primary lane.
+- **Primary lane:** one direction receiving most available strategic learning and ownership, not a quota on total work time.
+- **Exploration branch:** at most one, preferably embedded in existing work; no mandatory percentage or extra hours.
 - **Explicit non-focus:** attractive topics that receive no active investment now.
 
 Require a visible outcome:
@@ -39,12 +39,12 @@ If the answer bundles a team roadmap, pick one independently ownable wedge.
 
 ## Strategic bet: 6–8 weeks
 
-The bet must test the one-year position against a real team, user, or business pain.
+Use a 6-8 week review window to test the one-year position against a real team, user, business, or career-capability need. It is not automatically a fixed delivery deadline. Check capacity first; shrink, defer, or propose pausing the bet rather than adding obligations to a saturated schedule. Durable strategy changes still require authorization.
 
 Before proposing a solution:
 
 1. define the metric or observable outcome;
-2. define its exact start and end events;
+2. define exact start and end events for time-based metrics, or the specific behavior and comparison for a learning test;
 3. check whether a trustworthy baseline exists;
 4. analyze existing evidence before coding;
 5. if evidence is missing, create only the minimum instrumentation needed for a decision;
@@ -66,7 +66,7 @@ Before proposing a solution:
 - Stop or redirect evidence:
 ```
 
-Do not invent improvement targets before a baseline exists. The first milestone must be useful without every later phase shipping.
+Do not invent improvement targets before a baseline exists. The first milestone should be independently useful; for learning, explaining a mechanism, testing a prediction, or finding a misconception can suffice without a polished document. A small motivating experiment need not wait for a complete case study or platform. Keep delivery acceptance and production evidence requirements intact.
 
 ## Review cadence
 
@@ -77,15 +77,15 @@ Every 6–8 weeks, choose exactly one:
 - pivot because the hypothesis was wrong;
 - stop because team value or personal compounding value is insufficient.
 
-Review long-range direction quarterly or when material evidence changes; do not rewrite it every week.
+Review long-range direction quarterly or when material evidence changes; do not rewrite it every week or repeat its career-value justification in daily alignment. Curiosity can guide the next experiment without abandoning the direction.
 
 ## Rescue
 
-When reactive work displaced the bet:
+When work has been displaced, first decide whether resuming is currently useful and feasible. Recovery can mean reducing or pausing the bet, not only finding another slot:
 
-1. do not backfill history;
-2. identify the last concrete artifact and next executable step;
-3. confirm that the bet still has user or team value;
-4. shrink the next step to one independently useful session;
-5. schedule a primary and fallback slot;
-6. after two consecutive weeks without meaningful progress, align capacity with the stakeholder, shrink the bet, or demote it.
+1. Do not backfill history or compensate through evening work.
+2. Identify the last useful result or restart point only if resuming is wanted.
+3. Check value, actual capacity, and the user's current willingness; do not respond to fatigue with another long-term-value speech.
+4. If feasible, choose one small action or experiment and a concrete slot; add a fallback only for likely disruption and available capacity.
+5. If not feasible, propose reduced scope, renegotiation, or a pause. Keep external commitments and unconfirmed changes explicit; do not auto-book tomorrow.
+6. After repeated displacement, discuss workload allocation or relevance with the appropriate stakeholder rather than adding logging or blaming self-discipline. Do not send messages or change strategy/task state without authorization.

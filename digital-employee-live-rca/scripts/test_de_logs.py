@@ -23,7 +23,7 @@ class DeLogsTest(unittest.TestCase):
     def test_default_logcli_window_is_one_hour(self):
         self.assertEqual(de_logs.DEFAULT_HOURS, 1)
 
-    def test_test_environment_uses_bromo_service_logs_once(self):
+    def test_test_environment_reads_complete_container_daemon_log_once(self):
         args = argparse.Namespace(
             environment="test",
             limit=100,
@@ -43,15 +43,48 @@ class DeLogsTest(unittest.TestCase):
             [
                 "smc",
                 "services",
-                "logs",
+                "run",
                 "digitalemployee-gateway-test-sg",
                 "--env",
                 "test",
-                "--wide",
-                "--show-table=false",
+                "--raw",
+                "--timeout",
+                "30",
+                "--",
+                "cat",
+                "/data/log/digitalemployee-gateway-test-sg/daemon.log",
             ],
         )
         self.assertEqual(de_logs.windows(args), [(None, None)])
+
+    def test_test_window_coverage_marks_retained_window_complete(self):
+        window = (
+            de_logs.parse_minute("2026-09-09 10:00"),
+            de_logs.parse_minute("2026-09-09 11:00"),
+        )
+        records = [
+            de_logs.LogRecord("2026-09-09 09:59:59 service started", de_logs.parse_minute("2026-09-09 09:59"), 0, 0),
+            de_logs.LogRecord("2026-09-09 10:30:00 task_id=TASK-1", de_logs.parse_minute("2026-09-09 10:30"), 0, 1),
+        ]
+
+        coverage = de_logs.test_window_coverage(records, window)
+
+        self.assertEqual(coverage["status"], "complete")
+        self.assertTrue(coverage["absence_conclusive"])
+
+    def test_test_window_coverage_marks_late_or_rotated_log_partial(self):
+        window = (
+            de_logs.parse_minute("2026-09-09 10:00"),
+            de_logs.parse_minute("2026-09-09 11:00"),
+        )
+        records = [
+            de_logs.LogRecord("2026-09-09 10:25:00 service started", de_logs.parse_minute("2026-09-09 10:25"), 0, 0),
+        ]
+
+        coverage = de_logs.test_window_coverage(records, window)
+
+        self.assertEqual(coverage["status"], "partial")
+        self.assertFalse(coverage["absence_conclusive"])
 
     def test_test_window_excludes_unparseable_and_out_of_range_records(self):
         window = (

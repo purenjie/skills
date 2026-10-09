@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clear Evidence Report"
+  short_description: "Explain complex work clearly with traceable evidence"
+  default_prompt: "Use $build-clear-evidence-report to turn these materials into a clear, evidence-backed report for the intended audience."

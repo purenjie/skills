@@ -5,7 +5,7 @@ Use this reference when a confirmed marker crosses services.
 ## Environment and current identity
 
 - Production Gateway/Runner use `liveish/live` respectively, and the collector scopes each LogDB PQL to that environment.
-- Test queries use Bromo service logs: `digitalemployee-gateway-test-sg` and `digitalemployee-workerrunner-test-sg`. Bromo has no remote time predicate, so the collector fetches once and locally filters application timestamps and the full requested ID.
+- Test queries run `cat` inside configured running Gateway/Runner containers, read each complete `daemon.log`, then locally filter application timestamps and the full requested ID. Treat misses as conclusive only when the reported test window coverage is complete.
 - `execution_request_id` is the stable logical join key. `run_id` is the physical attempt and may change during recovery/reprovision; never join by time proximity alone.
 
 ## Identity bridge

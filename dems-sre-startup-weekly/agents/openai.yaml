@@ -1,0 +1,4 @@
+interface:
+  display_name: "DEMS SRE Weekly Metrics"
+  short_description: "Generate and track weekly SRE startup metrics"
+  default_prompt: "Use $dems-sre-startup-weekly to preview this week's V3 SRE startup metrics and update Confluence when requested."

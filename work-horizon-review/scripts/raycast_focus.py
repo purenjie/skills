@@ -26,7 +26,7 @@ RAYCAST_EXTENSIONS_DIR = (
 )
 COLLECTOR_SUPPORT_DIR = Path.home() / "Library" / "Application Support" / "work-horizon-review"
 COLLECTOR_DB_PATH = COLLECTOR_SUPPORT_DIR / "raycast-focus-sessions.db"
-DEFAULT_WEEKLY_ROOT = Path("/Users/renjie.pu/Documents/知识库/03. 工作记录")
+DEFAULT_WEEKLY_ROOT = Path.home() / "Documents" / "KnowledgeBase" / "03-work-records"
 LOG_COMMAND = "/usr/bin/log"
 LOG_PREDICATE = 'subsystem == "com.raycast.macos" AND category == "focus"'
 TIMESTAMP_RE = re.compile(

@@ -1,6 +1,6 @@
 # Gateway Marker Decision Guide
 
-Use this reference only after the first Gateway timeline exists. Gateway production logs use `liveish`. For the current test deployment, use the skill script with `--environment test`; it reads Bromo service logs from `digitalemployee-gateway-test-sg` and applies the time/ID filter locally.
+Use this reference only after the first Gateway timeline exists. Gateway production logs use the configured live environment. For the current test deployment, use the skill script with `--environment test`; it reads the complete `daemon.log` from configured running containers and applies the time/ID filter locally.
 
 ## Current observability contracts
 

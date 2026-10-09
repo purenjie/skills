@@ -1,0 +1,13 @@
+interface:
+  display_name: brag-skill · 把事情讲明白
+  short_description: 从你的原稿出发，澄清动机、做法、取舍与收益，并解释关键修改
+  default_prompt: 请用 $brag-skill 帮我优化下面的工作叙述，检查为什么做、如何做、取舍、结果与收益，解释关键修改，不清楚的地方向我追问。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

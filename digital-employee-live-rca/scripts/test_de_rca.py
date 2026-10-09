@@ -269,7 +269,7 @@ class DeRcaTest(unittest.TestCase):
                     label="forbidden",
                 )
 
-    def test_test_environment_uses_bromo_runner_logs(self):
+    def test_test_environment_reads_complete_runner_container_log(self):
         with tempfile.TemporaryDirectory() as directory:
             client = de_rca.RealLogClient(Path(directory), environment="test")
             completed = mock.Mock(returncode=0, stderr="")
@@ -288,12 +288,16 @@ class DeRcaTest(unittest.TestCase):
             [
                 "smc",
                 "services",
-                "logs",
+                "run",
                 "digitalemployee-workerrunner-test-sg",
                 "--env",
                 "test",
-                "--wide",
-                "--show-table=false",
+                "--raw",
+                "--timeout",
+                "45",
+                "--",
+                "cat",
+                "/data/log/digitalemployee-workerrunner-test-sg/daemon.log",
             ],
         )
 

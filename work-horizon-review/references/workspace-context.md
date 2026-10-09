@@ -7,21 +7,29 @@ Read this reference only when the user's configured notes, project-note filing, 
 Canonical strategy note:
 
 ```text
-/Users/renjie.pu/Documents/知识库/01. 战略与思考/工作方向与战略下注.md
+~/Documents/KnowledgeBase/01-strategy/work-direction.md
 ```
 
 Weekly operating notes:
 
 ```text
-/Users/renjie.pu/Documents/知识库/03. 工作记录/<year>/周复盘/
+~/Documents/KnowledgeBase/03-work-records/<year>/weekly/
 <year>-W<week>｜MM-DD～MM-DD.md
 _index.md
 ```
 
+Daily journals:
+
+```text
+~/Documents/KnowledgeBase/06-journal/<year>/<month>/YYYY-MM-DD.md
+```
+
+When a journal exists for a weekly daily entry, link its date in the heading, for example `### 周三 [[2026-09-09|09-09]]`. If it does not exist, keep the date as plain text and do not create an empty journal by default.
+
 Active Digital Employee need notes:
 
 ```text
-/Users/renjie.pu/Documents/知识库/03. 工作记录/数字员工/需求/<需求名>.md
+~/Documents/KnowledgeBase/03-work-records/digital-employee/needs/<need-name>.md
 ```
 
 Use one note per active need with no date prefix. Completed needs move to `需求/archive/`; RCA notes stay in `问题排查/`.
@@ -44,8 +52,8 @@ When a project note is requested or confirmed and none exists, use the minimal s
 ## Digital Employee repositories
 
 ```text
-Gateway: /Users/renjie.pu/Projects/digital_employee_gateway
-Runner:  /Users/renjie.pu/Projects/digital-worker-runner
+Gateway: ~/Projects/<gateway-repository>
+Runner:  ~/Projects/<runner-repository>
 ```
 
 Use Gateway context for ingress, orchestration, SeaTalk/card interactions, and Gateway lifecycle. Use Runner context for execution, Sandbox provisioning/lifecycle, task context, runtime, and Runner interfaces. Read both only across the handoff.

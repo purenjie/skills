@@ -19,11 +19,15 @@ from pathlib import Path
 GATEWAY_APP = "shopee.engineering_infra.infra_products.digital_employee.gateway"
 RUNNER_APP = "shopee.engineering_infra.infra_products.digital_employee.worker_runner"
 # Test Space can list these applications but currently cannot resolve either
-# application to a LogDB. Bromo's service log endpoint is therefore the
-# canonical test source, rather than a production LogDB fallback.
+# application to a LogDB. Read the complete daemon.log from each running Bromo
+# container instead of the truncated `smc services logs` tail.
 TEST_SERVICES = {
     "gateway": "digitalemployee-gateway-test-sg",
     "runner": "digitalemployee-workerrunner-test-sg",
+}
+TEST_LOG_PATHS = {
+    service: f"/data/log/{service_name}/daemon.log"
+    for service, service_name in TEST_SERVICES.items()
 }
 LIVE_ENVIRONMENTS = {
     "gateway": "liveish",
@@ -31,7 +35,7 @@ LIVE_ENVIRONMENTS = {
 }
 DEFAULT_OUT_DIR = Path("/tmp/digital-employee-live-rca")
 RUN_TAG = f"{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"
-NOTE_DIR = Path("/Users/renjie.pu/Documents/知识库/03. 工作记录/数字员工/问题排查")
+NOTE_DIR = Path.home() / "Documents" / "KnowledgeBase" / "digital-employee" / "incidents"
 DEFAULT_HOURS = 1
 LOGCLI_MAX_LIMIT = 100
 # These events end one Gateway request/round. Some of them are intentionally
@@ -127,7 +131,7 @@ def add_query_args(parser: argparse.ArgumentParser, service: str) -> None:
         "--environment",
         choices=("live", "test"),
         default="live",
-        help="live uses Space LogDB; test uses Bromo daemon.log for the active test service.",
+        help="live uses Space LogDB; test reads complete daemon.log files from running Bromo containers.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print collection commands without running them.")
     parser.add_argument(
@@ -241,8 +245,8 @@ def parse_minute(value: str) -> dt.datetime:
 
 
 def windows(args: argparse.Namespace) -> list[tuple[str | None, str | None]]:
-    # Bromo service logs have no remote start/end predicate. Fetch once, then
-    # apply the requested time window to parsed application timestamps locally.
+    # Test container daemon.log has no remote start/end predicate. Read it once,
+    # then apply the requested window to parsed application timestamps locally.
     if args.start or args.end:
         if not (args.start and args.end):
             raise SystemExit("Provide both --start and --end, or use --hours.")
@@ -276,16 +280,7 @@ def build_command(
         service_name = service if service in TEST_SERVICES else (
             "gateway" if app == GATEWAY_APP else "runner"
         )
-        return [
-            "smc",
-            "services",
-            "logs",
-            TEST_SERVICES[service_name],
-            "--env",
-            "test",
-            "--wide",
-            "--show-table=false",
-        ]
+        return test_container_log_command(service_name, args.timeout)
     command = ["smc", "logcli", "query", app, "--pql", pql, "--limit", str(args.limit), "--timeout", str(args.timeout), "--json"]
     if start and end:
         command.extend(["--start", start, "--end", end])
@@ -294,8 +289,26 @@ def build_command(
     return command
 
 
+def test_container_log_command(service: str, timeout: int) -> list[str]:
+    """Read the complete daemon.log from every running test service container."""
+    return [
+        "smc",
+        "services",
+        "run",
+        TEST_SERVICES[service],
+        "--env",
+        "test",
+        "--raw",
+        "--timeout",
+        str(timeout),
+        "--",
+        "cat",
+        TEST_LOG_PATHS[service],
+    ]
+
+
 def record_window(args: argparse.Namespace) -> tuple[dt.datetime, dt.datetime] | None:
-    """Return the local filter window required by Bromo test log collection."""
+    """Return the local filter window required by test container log collection."""
     if getattr(args, "environment", "live") != "test":
         return None
     if args.start or args.end:
@@ -312,7 +325,7 @@ def filter_records_by_window(
     if window is None:
         return records
     start, end = window
-    # The Bromo endpoint has no remote time-range filter. Excluding records
+    # Container reads have no remote time-range filter. Excluding records
     # without a parseable application timestamp keeps task metadata and stale
     # container rows out of RCA evidence.
     return [
@@ -320,6 +333,39 @@ def filter_records_by_window(
         for record in records
         if record.timestamp is not None and start <= record.timestamp <= end
     ]
+
+
+def test_window_coverage(
+    records: list[LogRecord], window: tuple[dt.datetime, dt.datetime] | None
+) -> dict[str, object] | None:
+    """Report whether container logs visibly cover the requested test window.
+
+    Positive matches remain valid with partial coverage. A miss is conclusive
+    only when the earliest retained application record reaches the window start.
+    """
+    if window is None:
+        return None
+    application_timestamps = [
+        record.timestamp
+        for record in records
+        if record.timestamp is not None and "│" not in record.raw
+    ]
+    if not application_timestamps:
+        return {
+            "status": "unknown",
+            "reason": "no parseable application timestamps in container daemon.log",
+        }
+    earliest = min(application_timestamps)
+    latest = max(application_timestamps)
+    start, _ = window
+    status = "complete" if earliest <= start else "partial"
+    return {
+        "status": status,
+        "earliest": earliest.isoformat(sep=" "),
+        "latest": latest.isoformat(sep=" "),
+        "requested_start": start.isoformat(sep=" "),
+        "absence_conclusive": status == "complete",
+    }
 
 
 def print_empty_hint(args: argparse.Namespace, summary: dict[str, object]) -> None:
@@ -331,8 +377,8 @@ def print_empty_hint(args: argparse.Namespace, summary: dict[str, object]) -> No
         return
     if getattr(args, "environment", "live") == "test":
         print(
-            "[hint] Test Bromo logs were filtered locally by timestamp and exact requested term. "
-            "A miss is not proof of absence: verify the active instance retained the incident window.",
+            "[hint] No exact match in the running test containers' daemon.log. "
+            "Check test_window_coverage before treating the miss as evidence of absence.",
             file=sys.stderr,
         )
     elif not args.start and not args.hours:
@@ -363,7 +409,7 @@ def run_query(app: str, service: str, terms: list[str], args: argparse.Namespace
         if args.dry_run:
             print(f"[dry-run] {printable} > {out_file}")
         else:
-            source = "Bromo test daemon.log" if environment == "test" else "Space LogDB"
+            source = "running-container daemon.log" if environment == "test" else "Space LogDB"
             print(f"[query] {service} ({source}) seg {index:02d}/{len(segs)} -> {out_file}")
             with out_file.open("w", encoding="utf-8") as handle:
                 completed = subprocess.run(command, stdout=handle, stderr=subprocess.PIPE, text=True)
@@ -848,12 +894,15 @@ def summarize(
     environment: str = "live",
 ) -> dict[str, object]:
     all_records = read_records(files)
+    coverage = test_window_coverage(all_records, time_window) if environment == "test" else None
     windowed_records = filter_records_by_window(all_records, time_window)
     records = filter_records(windowed_records, exact_terms)
     text = "\n".join(record.raw for record in records)
     ids = extract_ids(text)
     timeline = extract_timeline(text, service)
     signals = analyze_signals(text, service, environment=environment)
+    if coverage is not None:
+        signals["test_window_coverage"] = coverage
     saturated_files = []
     if query_limit:
         record_counts: dict[int, int] = {}
@@ -893,15 +942,20 @@ def summarize(
     if all_records and exact_terms and not records:
         source = "collected test logs" if time_window is not None else "broad PQL"
         print(
-            f"\n[{service}] warning\n- {source} returned records, but none contained the full requested ID; "
             f"\n[{service}] warning\n- {source} returned records, but none contained the full requested term; "
             "short-tail matches were excluded from RCA analysis"
+        )
+    if coverage and coverage.get("status") != "complete":
+        print(
+            f"\n[{service}] warning\n- requested test window is not fully retained in the running "
+            "container daemon.log; a missing term is inconclusive"
         )
     return {
         "ids": ids,
         "timeline": timeline,
         "signals": signals,
         "files": [str(path) for path in files],
+        "coverage": coverage,
         "_text": text,
     }
 

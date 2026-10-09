@@ -1,6 +1,6 @@
 # Daily Morning Alignment
 
-Use this workflow to decide what receives the first meaningful block, what may legitimately preempt it, and how displaced proactive work resumes. The goal is not to plan the whole day.
+Use this workflow to choose feasible work, resolve a capacity conflict, or establish a stopping boundary. The goal is not to plan the whole day or manufacture motivation. A day of essential commitments without extra growth work is valid.
 
 Read [weekly-file.md](weekly-file.md) before updating persistent state. Read [interruption-and-maintenance.md](interruption-and-maintenance.md) only when reactive work is material, and [integrations.md](integrations.md) only for integrations actually used.
 
@@ -15,116 +15,98 @@ Default to:
 
 Read the canonical strategy note only when the active bet is missing, stale, or contradicted. Read Focus evidence only when it changes the judgment about protected investment. Do not scan the full backlog or reconstruct missing days.
 
-Ask about meetings, incidents, or hard commitments only when they are not discoverable and would change the winner or slot.
+Use already stated workload, energy, and preferences; do not ask for daily mood scores. Ask at most one decisive question, only when the answer changes the action, negotiation, or stopping boundary. Do not load personal reflections just to infer the user's emotional state; if they request that context, distinguish original notes from AI-generated interpretations.
 
 ## Three-minute capture triage
 
-Treat Raycast Note or another scratchpad as temporary input, not another task system. A lightweight capture shape is:
-
-```markdown
-## 今日主动
-
-- [ ] one protected item
-
-## 今日义务
-
-- [ ] bounded hard commitments
-
-## 临时捕获
-
-- undecided observations, requests, or symptoms
-```
+Triage only supplied captures with continuing value. Keep the scratchpad free-form; do not require a new template, daily entry, or end-of-day cleanup.
 
 At the next morning alignment, route only items with continuing value:
 
 - personal next action → Todoist;
 - multi-person coordination or formal acceptance → Jira or the configured tracker;
 - reusable RCA, reason, design, metric, or decision → project note;
-- yesterday's one to three most important outcomes or changes → weekly note;
+- meaningful supplied outcomes or changes worth retaining → weekly note, without a daily count quota;
 - no future value → discard without archiving.
 
 Do not copy the full item across systems. When Jira owns the work, Todoist normally keeps only the user's next action and Jira link. Do not require an end-of-day cleanup.
+
+When the scratchpad uses the user's own task names or shorthand, preserve those nouns in the weekly daily entry. Add state labels and grouping without translating concrete facts into unfamiliar management language. If a higher-level pattern emerges, propose it separately for `本周关注与判断`; preview that judgment before writing and keep it provisional until Friday review.
 
 This triage is a decision preview, not write authorization. Follow the authorization rules in `SKILL.md` before changing anything except the scoped weekly note.
 
 ## Morning decision
 
-### Choose one winner
+### Check capacity before selecting more work
 
-Use this order:
+Identify unavoidable obligations, their minimum acceptance boundaries, and the usable time left after meetings, on-call duties, verification, and likely interrupts. Use rough estimates only when helpful; do not invent precision or reconstruct a full schedule.
 
-1. a real incident or hard external commitment when delay has material cost;
-2. otherwise, the next concrete step of the active strategic bet;
-3. otherwise, the most valuable important-but-not-urgent commitment that leaves a reusable result.
+If obligations exceed capacity, handle one concrete conflict first. Propose a scope reduction, sequence change, revised date, delegation, or request for support. Draft the smallest useful stakeholder message without sending it:
 
-Choose one主动推进 item, not several equal priorities. Other work may appear as hard commitments or maintenance.
+```text
+今天 A 需要完成验证，B 会阻塞联调。我能保证这两项；
+C 如果也必须今天完成，需要缩小范围、顺延其中一项或找人协助，请一起确认。
+```
 
-### Define one artifact
+A proposal is not an agreed change. Keep unresolved commitments visible and do not claim a deadline moved before confirmation. If all obligations are genuinely urgent and the user lacks authority to reduce them, identify who can decide or help. Do not add a strategic block, suggest working faster, or assume evening capacity.
 
-Translate the winner into something that can exist after one 50- or 90-minute block: a baseline, verified query, bounded fix and regression, deployment verification, protocol decision, focused dashboard, or RCA with a confirmed boundary and next hypothesis.
+### Choose at most one proactive item when feasible
 
-Reject vague anchors such as “optimize”, “work on monitoring”, “fix bugs”, or “look into it.” When enough evidence exists, produce the decision artifact instead of expanding instrumentation.
+Protect genuine incidents and hard commitments. Within the remaining feasible choices, prefer a concrete question the user wants to understand, a small experiment, or an immediately useful improvement. Embed it in existing delivery when possible; it is not an extra daily assignment.
 
-### Protect the block
+The active strategic bet is a candidate, not an automatic winner. Do not repeat career or long-term-value explanations unless they change a decision. A motivating experiment may precede systematic documentation; do not make completing an old case study a prerequisite for all new exploration.
 
-Specify:
+Curiosity is optional. If nothing appeals, choose a low-friction necessary step, fulfill only existing commitments, reduce load, or stop. Do not require daily excitement, an interest score, or a streak.
 
-- primary slot or first-available-block rule;
-- same-day fallback when possible;
-- final fallback, normally the next working day's first block;
-- exact preemption criteria.
+### Match the result to the kind of work
 
-“After urgent work” and “when I have time” are not slots. Ordinary bugs, confirmations, reviews, and help requests wait for a maintenance window.
+- **Delivery:** define the smallest accepted result and relevant verification; keep production and safety standards unchanged.
+- **Exploration:** name one question and a small test, such as predicting a failure then comparing the observed behavior. A clarified misconception or useful failed experiment can be sufficient. No mandatory document or claim of production completion.
+- **Reduction or recovery:** a concrete negotiation, stopping boundary, or support choice can be the result. Rest does not need an artifact or proof that it improves productivity.
 
-### Bound the rest
+Fit the duration to actual capacity. A short trial may be enough; do not default to a 50- or 90-minute block. Avoid vague work labels, but do not turn ordinary rest or companionship into a measurable deliverable.
 
-- identify today's real hard commitments;
-- choose at most one or two maintenance windows;
-- name one to three attractive or noisy things that will not receive active investment today.
+### Define when enough is enough
 
-Use [interruption-and-maintenance.md](interruption-and-maintenance.md) when an issue may preempt the block or maintenance repeatedly exceeds budget.
+For chosen work, agree what can reasonably be finished or handed off today, and what remains queued or pending negotiation. Stopping need not wait for an empty backlog or the absence of anxiety. Do not silently abandon external obligations or critical on-call coverage.
+
+Do not automatically refill freed time, add learning after early completion, or prescribe compensatory evening work after a break. If workload remains structurally excessive, address allocation with the relevant owner rather than repeating self-discipline advice.
+
+When the user reports that staying busy offers relief from distress, acknowledge that function without diagnosing it. Do not abruptly demand empty time, meditation, introspection, or a more exciting goal. Offer a less demanding activity, trusted company, or support without requiring a choice or assignment. Follow the support and safety boundaries in `SKILL.md`; do not turn this into a therapy session or record private explanations in the weekly note.
+
+### Protect only a feasible block
+
+When work is chosen, attach one concrete slot or a first-available-block rule. Add a fallback only for likely or actual disruption, and only if capacity exists. After displacement, save the restart point and agree a feasible slot, a reduced scope, or pending renegotiation. Do not auto-book the next morning or create catch-up debt.
+
+Use [interruption-and-maintenance.md](interruption-and-maintenance.md) for competing incidents or recurring support work. Batch only what can actually wait; use response windows matched to the role, not fixed task-count limits.
 
 ## Separate the conversation from persistence
 
-The conversational decision may be complete:
+Keep the conversation brief and use only relevant fields. This is an optional shape, not a form to complete:
 
 ```markdown
 ## 今日对齐
-
-- 主动推进：
-- 今日最小产物：
-- 为什么今天选它：
-
-## 保护安排
-
-- 主时段：
-- 同日 fallback：
-- 最终 fallback：
-- 可打断条件：
-
-## 外部承诺与维护
-
-- 今日硬承诺：
-- 维护窗口与预算：
-
-## 今日不做
-
-- ...
+- 今天先做／先协商：
+- 做到这里就可以停：
+- 时段或待确认的安排：
 ```
 
-Do not persist all of this every day. The weekly note receives only three to five short bullets using the persistence contract in [weekly-file.md](weekly-file.md). Omit unchanged protection rules, empty categories, and duplicated task status.
+Name a real displacement only when it exists. Omit task and slot fields for a support-only conversation; do not require the user to turn it into a work plan.
 
-Use trusted evidence for yesterday. A commit proves code exists, not deployment; Focus proves investment, not completion. Ask one concise question only when a conflict changes today's winner or the durable record.
+Persist only useful operational facts under the weekly-note contract. No note update is required when there is no new operational fact. Do not log emotional disclosures, support activities, or why stopping feels difficult. An authorized entry may record an agreed scope change, not the private explanation behind it. Omit unchanged rules, empty categories, and duplicated task state.
+
+Use `每日进展` as the weekly section name. When a matching daily journal already exists, link the date in the heading, for example `### 周三 [[2026-09-09|09-09]]`; otherwise keep a plain date and do not create an empty journal by default.
+
+Use trusted evidence for yesterday. A commit proves code exists, not deployment; Focus proves investment, not completion. A proposed scope or schedule change is still pending until confirmed. Resolve material evidence conflicts within the one-question daily limit, or preserve the uncertainty.
 
 ## Done condition
 
-Daily alignment is complete when:
+Finish at the smallest useful outcome; do not require all of these:
 
-- one winner and one concrete artifact are clear;
-- primary, fallback, and preemption conditions are explicit;
-- reactive work has a bounded lane;
-- the not-do boundary prevents predictable drift;
-- the compact weekly-note entry is written when persistence is authorized;
-- the user can start without another prioritization conversation.
+- **Work chosen:** one feasible next action, an appropriate acceptance or learning boundary, and a concrete slot or first-available-block rule.
+- **Overload exposed:** one actual conflict, a concrete scope/order/support proposal, and the person or decision needed; unconfirmed changes remain pending.
+- **Stopping or support:** a tolerable boundary or acknowledgment without adding a task, artifact, timer, or written entry. The user need not prove they feel better.
+
+For chosen work, make likely or actual displacement explicit without inventing recovery capacity. Persist a compact operational entry only when useful and authorized. End before another prioritization or self-improvement exercise becomes necessary.
 
 If weekly-note maintenance regularly exceeds about three minutes, remove fields before adding automation or another log.

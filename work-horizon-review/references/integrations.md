@@ -6,13 +6,11 @@ Read only the relevant section when Todoist, Jira, Raycast Focus, or their evide
 
 Todoist is authoritative for the user's current actions, status, weekly commitments, and real deadlines.
 
-For read-only discovery, verify the CLI and inspect current state:
+For read-only discovery, verify the CLI and inspect only the selected project, view, or dates needed for this review. Use the Todoist skill and installed CLI help for supported filters. Do not list the full backlog by default:
 
 ```bash
 td auth status
-td project list --json
-td task list --all --json --full
-td filter list --json
+td task list --help
 ```
 
 If `td` is missing, offer to install `@doist/todoist-cli`; authentication belongs to the user.
@@ -75,8 +73,9 @@ Data-source order:
 Rules:
 
 - resolve `<skill-dir>` from the directory containing `SKILL.md`;
-- use the daily 主动推进 artifact as the Focus goal;
-- show the dry-run goal and duration, then obtain explicit confirmation before the first launch;
+- use a chosen work action or exploration question as the Focus goal only when a timed session is wanted;
+- if the note has no actionable anchor, do not launch or invent one; obtain an explicit goal and use a supported direct-start command, or skip Focus without adding compulsory note fields;
+- show the dry-run goal and capacity-appropriate duration, then obtain explicit confirmation before launch; do not require Focus for rest, support, or a day with no proactive block;
 - keep raw goals local and persist only bounded aggregates;
 - use `log stream`, not periodic `log show`, for collection;
 - recover the latest Goal from Raycast Preferences when a Summary lacks a Start/Goal event;

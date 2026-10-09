@@ -1,6 +1,12 @@
 ---
 name: todoist-api
-description: This skill provides instructions for interacting with Todoist using the td CLI tool. It covers CRUD operations for tasks/projects/sections/labels/comments, and requires confirmation before destructive actions. Use this skill when the user wants to read, create, update, or delete Todoist data.
+description: This skill provides instructions for interacting with Todoist using
+  the td CLI tool. It covers CRUD operations for
+  tasks/projects/sections/labels/comments, and requires confirmation before
+  destructive actions. Use this skill when the user wants to read, create,
+  update, or delete Todoist data.
+metadata:
+  copilot-enabled-agents: codex
 ---
 
 # Todoist CLI Skill

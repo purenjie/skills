@@ -1,6 +1,6 @@
 # Worker Runner Marker Decision Guide
 
-Use this reference only after the first Runner timeline exists. Runner production logs use `live`. For the current test deployment, use the skill script with `--environment test`; it reads Bromo service logs from `digitalemployee-workerrunner-test-sg` and filters the fetched output locally.
+Use this reference only after the first Runner timeline exists. Runner production logs use the configured live environment. For the current test deployment, use the skill script with `--environment test`; it reads the complete `daemon.log` from configured running containers and filters the output locally.
 
 ## Current source and identity contract
 
